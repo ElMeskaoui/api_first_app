@@ -76,7 +76,12 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
-                )
+                ),
+                IconButton(onPressed: (){
+                  setState((){
+                    this.queryTextEditingController.clear();
+                  });
+                }, icon: Icon(Icons.add))
               ],
             ),
             //--------------------------------------------------------------------------------------------------

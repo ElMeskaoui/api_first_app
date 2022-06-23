@@ -1,22 +1,23 @@
 import 'dart:convert';
 
+import 'package:api_first_app/pages/product/productPage.dart';
 import 'package:api_first_app/pages/product2/productPage2.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+class CategoriesPage extends StatefulWidget{
 
-class SearchPage extends StatefulWidget{
+  int? id;
+  CategoriesPage({required this.id});
 
-  String? searchTo;
-  SearchPage({required this.searchTo});
 
   @override
-  State<SearchPage> createState() => _SearchPageState();
+  State<CategoriesPage> createState() => _CategoriesPageState();
 }
 
-class _SearchPageState extends State<SearchPage> {
+class _CategoriesPageState extends State<CategoriesPage> {
 
-  dynamic listSearched;
+  dynamic listSearchedproducts;
   dynamic productsDetails;
 
 
@@ -25,23 +26,23 @@ class _SearchPageState extends State<SearchPage> {
     setState((){
       _loadSearch();
     });
-    }
+  }
   Future<dynamic>  _loadSearch() async{
-    String url="https://www.apollopharmacy.in/_next/data/1655835583810/search-medicines/${widget.searchTo}.json?text=${widget.searchTo}";
+    String url="https://theparapharmacy.ca/api/1/categories/${widget.id}/products";
+    print(url);
     http.Response reponce = await http.get(Uri.parse(url));
     if(reponce.statusCode==200){
       setState((){
-        listSearched=jsonDecode(reponce.body);
-        productsDetails=listSearched["pageProps"]["productsDetails"];
+        listSearchedproducts=jsonDecode(reponce.body);
       });
     }
-    return listSearched;
+    return listSearchedproducts;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("${widget.searchTo}")),
+      appBar: AppBar(title: Text("categories")),
       body: FutureBuilder(
         future: _loadSearch(),
         builder:
@@ -61,26 +62,26 @@ class _SearchPageState extends State<SearchPage> {
                               onTap: (){
                                 Navigator.push(context,
                                     MaterialPageRoute(builder:
-                                        (context)=>ProductPage2(url_key:productsDetails[index]['url_key'],)));
+                                        (context)=>ProductPage(id:listSearchedproducts[index]['id'],)));
                               },
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Padding(padding: EdgeInsets.symmetric(vertical: 15,horizontal: 10),
                                       child:CircleAvatar(
-                                        backgroundImage: NetworkImage('https://newassets.apollo247.com/pub/media/${productsDetails[index]['thumbnail']}'),
+                                        backgroundImage: NetworkImage('${listSearchedproducts[index]["languages"]["fr"]["poster"]["prototype"]}'),
                                       ),),
                                     SizedBox(width: 18,),
                                     Expanded(
                                       child: Align(
-                                          alignment: Alignment.center,
+                                        alignment: Alignment.center,
                                         child: Padding(
                                           padding: const EdgeInsets.all(15.0),
-                                          child: Text("${productsDetails[index]["name"]}",style: TextStyle(fontSize: 15 ),
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 3,),
+                                          child: Text("${listSearchedproducts[index]["languages"]["fr"]["name"]}",style: TextStyle(fontSize: 15 ),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 3,),
                                         ),
                                       ),
                                     ),
@@ -89,7 +90,7 @@ class _SearchPageState extends State<SearchPage> {
                               )),
                         ),
                         separatorBuilder: (context, index)=> Divider(height: 9, color: Colors.deepOrange),
-                        itemCount: productsDetails==null?0:productsDetails.length)
+                        itemCount: listSearchedproducts==null?0:listSearchedproducts.length)
                   ],
                 ),
               ),

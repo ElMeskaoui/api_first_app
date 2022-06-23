@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:api_first_app/pages/categories/categories.page.dart';
+import 'package:api_first_app/pages/product2/productPage2.dart';
 import 'package:image_network/image_network.dart';
 
 import 'package:flutter/material.dart';
@@ -34,7 +36,7 @@ class _ProductPageState extends State<ProductPage> {
         productCat=product["categories"];
       });
     }
-    return jsonDecode(reponce.body);
+    return product;
   }
 
   @override
@@ -98,20 +100,68 @@ class _ProductPageState extends State<ProductPage> {
                                     color: Colors.amber,
                                     fontFamily: "VarelaRound"),),
                             ),
-                            Center(
-                              child: Column(
-                                children: [
-                                  ListView.separated(
-                                      scrollDirection: Axis.vertical,
-                                      shrinkWrap: true,
-                                      itemBuilder: (context, index)=>ListTile(
-                                        title: Text("${productCat[index]["localization"]["name"]}"),
-                                      ),
-                                      separatorBuilder: (context, index)=> Divider(height: 3, color: Colors.deepOrange),
-                                      itemCount: productCat==null?0:productCat.length)
-                                ],
+
+                            //-------------------------------------------------------categories-----------------------------
+                            if(productCat.length>=1) Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: 160,
+                              padding: EdgeInsets.all(15),
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Column(
+                                  children: <Widget>[ SizedBox(
+                                    height: 130,
+                                    width: 400,
+                                    child: Column(
+                                      children: [
+                                        Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text("Categories:", style: TextStyle(fontSize: 20,fontFamily: "Amiri", ),
+                                            )),
+                                        Expanded(
+                                          child: ListView.builder(
+                                              scrollDirection: Axis.horizontal,
+                                              shrinkWrap: true,
+                                              itemBuilder: (context, index)=>Container(
+                                                margin: EdgeInsets.all(6),
+                                                height: 150,
+                                                child: InkWell(
+                                                  onTap: (){
+                                                    Navigator.push(context,
+                                                        MaterialPageRoute(builder:
+                                                            //------------------------------------=====
+                                                            (context)=>CategoriesPage(id:productCat[index]['id'],)));
+                                                  },
+                                                  child: Card(
+                                                    color: Colors.amberAccent,
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(40.0),
+                                                    ),
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.all(20.0),
+                                                      child: Center(child: Row(
+                                                        children: [
+                                                          Align(
+                                                            alignment: Alignment.center,
+                                                              child: Text("${productCat[index]["localization"]["name"]}")),
+                                                        ],
+                                                      )),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              itemCount: productCat==null?0:productCat.length),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  ],
+
+                                ),
                               ),
                             ),
+
+                            //-----------------------------------------------------------------------------------------------
                             Padding(
                               padding: const EdgeInsets.only(right: 15.0,left: 24.0, top: 10),
                               child: Container(
